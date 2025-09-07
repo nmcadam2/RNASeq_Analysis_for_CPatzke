@@ -14,13 +14,13 @@ library(ggtangle)
 library(enrichplot)
 
 #Set Directories
-dir <-"C:/Users/neilm/OneDrive/Desktop/Kabuki Syndrome RNASeq Analysis/"
+dir <-"Path/To/Working/Dir"
 setwd(dir)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #load data
-data <-read.csv("Finished/Results/MouseHippocampus/DifferentialExpression/Results.csv", header = T)
-gene.list<-data[,1]
+data <-read.csv("", header = T)
+gene.list<-data[,1] #should be the gene symbols from DESeq2Results
 
 #Convert gene symbol to entrez id
 entrez.map<-mapIds(org.Mm.eg.db, keys = gene.list, column = "ENTREZID", keytype = "SYMBOL")
@@ -32,9 +32,9 @@ data <- data %>% filter(!is.na(entrezid))
 sum(is.na(data$entrezid))
 
 #Create gene list (lfc values and their respective entrez IDs sorted)
-geneList = data[,3]
-names(geneList) = as.character(data[,8])
-geneList = sort(geneList, decreasing = T)
+geneList = data[,3] #lfcs
+names(geneList) = as.character(data[,8]) #entrezIDs
+geneList = sort(geneList, decreasing = T) #sort by lfc for rank based analysis
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #gene set enrichment.
