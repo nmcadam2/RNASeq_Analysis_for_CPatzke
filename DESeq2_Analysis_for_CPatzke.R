@@ -34,7 +34,7 @@ countsTab[] <- lapply(countsTab, function(x) if (is.numeric(x)) as.integer(x) el
 metaTable$treatment<-relevel(as.factor(metaTable$treatment), "deltaCre")
 
 #Remove Y chromosome genes - Experiment did not control for mouse sex so Y must be removed from analysis
-#Literature reports few differences in mouse gene expression between chromosomal sexes at early developmental stages.
+#Literature reports few differences in mouse gene expression between chromosomal sexes at early developmental stages
 Ygenes <- readLines("YChromosome_genes.txt")
 nrow(countsTab);countsTab <- countsTab %>% filter(!(rownames(countsTab) %in% Ygenes)); nrow(countsTab) # number should drop by ~340 in mouse samples
 
@@ -42,10 +42,10 @@ nrow(countsTab);countsTab <- countsTab %>% filter(!(rownames(countsTab) %in% Yge
 drop = rowSums(countsTab < 15) > 6
 workingCounts = countsTab[!drop, ]
 
-#make metaData factors - skip if using continuous lib size covariate
+#make metaData factors
 for (i in 1:ncol(metaTable)) {metaTable[,i] <- as.factor(metaTable[,i])}
 
-#write model - If you did the optional step of libsize as a covariate use ~libsize + group + treatment
+#write model
 design = ~group + treatment
 
 #Create DESeq2 object
@@ -113,9 +113,7 @@ ggplot(pcaData, aes(PC1, PC2, color=treatment, shape=group)) +
   scale_color_manual(name = c("Cre", "deltaCre"), values=c("#FFD500","#005BBB"))
 dev.off()
 
-#MA - Two options here: DESeq2 Encourages the use shrinkage estimators like apeglm when plotting MA to avoid the use of arbitrary filtering thresholds
-#For human / mouse co-cultured samples fold changes were so modest that shrinkage is inappropriate, as such only raw should be used with the co-cultured samples.
-# source :https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#ma-plot
+#MA
 #Raw
 svg(paste(res.dir,"MA_raw.svg", sep = ""),width = 8, height = 7,bg = "white") 
 plotMA(dds, ylim=c(-5,5))
@@ -132,7 +130,7 @@ dev.off()
 #Generate Results
 results <- results(dds, contrast = c("treatment", "Cre", "deltaCre"))
 
-#Filter Results - I opt for p-adj <= 0.05 and LFC of +/-0.5 per literature values of LFC in neuron cell culture
+#Filter Results - I opt for p-adj <= 0.05 and LFC of +/- 0.5 per literature values of LFC in neuron cell culture
 res.nona <- na.omit(results)
 res.sig = res.nona[res.nona$padj <= 0.05,] ; nrow(res.sig) # for number of DE Genes at p <= 0.05
 res.sig.lfc = res.sig[abs(res.sig$log2FoldChange) > 0.5,]; nrow(res.sig.lfc) # for number of DE Genes at p <= 0.05 & LFC =/- 0.5
